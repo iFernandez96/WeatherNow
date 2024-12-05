@@ -1,0 +1,8 @@
+<a href="/">Home</a>
+<a href="/quotes">Quotes</a>
+<a href="/authors">Authors</a>
+<% if (auth) { %>
+    <a href="/logout">Logout</a>
+<% } else { %>
+    <a href="/login">Login</a>
+<% } %>
