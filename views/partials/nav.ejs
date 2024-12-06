@@ -1,8 +1,17 @@
-<a href="/">Home</a>
-<a href="/quotes">Quotes</a>
-<a href="/authors">Authors</a>
-<% if (auth) { %>
-    <a href="/logout">Logout</a>
-<% } else { %>
-    <a href="/login">Login</a>
-<% } %>
+<nav>
+    <ul>
+        <li>
+            <a href="/" class="<%= currentPath == '/' ? 'active' : '' %>">Home</a>
+        </li>
+        <% if (auth) { %>
+            <li>
+                <a href="/logout" class="<%= currentPath == '/logout' ? 'active' : '' %>">Logout</a>
+            </li>
+        <% } else { %>
+            <li>
+                <a href="/login" class="<%= currentPath == '/login' ? 'active' : '' %>">Login</a>
+                <a href="/register" class="<%= currentPath == '/register' ? 'active' : '' %>">Register</a>
+            </li>
+        <% } %>
+    </ul>
+</nav>

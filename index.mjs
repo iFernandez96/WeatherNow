@@ -18,11 +18,16 @@ app.use(session({
     saveUninitialized: true
 }))
 
+app.use((req, res, next) => {
+    res.locals.currentPath = req.path;
+    next();
+});
+
 const pool = mysql.createPool({
     host: "israeljosefernandez.tech",
     user: "israeljo_laptop",
     password: "Cst-336",
-    database: "israeljo_database_1",
+    database: "israeljo_database_2",
     connectionLimit: 10,
     waitForConnections: true
 });
@@ -37,10 +42,17 @@ function isAuthenticated(req, res, next) {
     }
 }
 
+function isNotAuthenticated(req, res, next) {
+    if (req.session.authenticated) {
+        return res.redirect('/profile');
+    }
+    next();
+}
+
 //routes
 app.get('/', async (req, res) => {
     let auth = req.session.authenticated
-   res.render('home.ejs', {auth});
+    res.render('home.ejs', {auth});
 });
 
 app.get('/logout',isAuthenticated, (req, res) => {
@@ -54,19 +66,15 @@ app.get("/dbTest", async(req, res) => {
     res.send(rows);
 });//dbTest
 
-app.get('/login', (req, res) => {
-    res.render('login');
-});
-
 app.get('/profile', isAuthenticated, (req, res) => {
     let auth = req.session.authenticated;
     res.render('profile', {auth});
 });
 
-app.post('/login', async (req, res) => {
+app.post('/login',isNotAuthenticated, async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
-    let sql = `SELECT * FROM admin WHERE username = ?`
+    let sql = `SELECT * FROM admin WHERE username = ?`;
     let sqlParams = [username];
     const [rows] = await conn.query(sql, sqlParams);
     if (rows.length <= 0) {
@@ -78,13 +86,23 @@ app.post('/login', async (req, res) => {
     if (match) {
         req.session.fullName = rows[0].firstName + " " + rows[0].lastName;
         req.session.authenticated = true;
-        res.render('profile');
+        let auth = req.session.authenticated;
+        res.render('profile', {auth});
     } else {
         res.redirect('/');
     }
 
 });
+app.get('/register', isNotAuthenticated, (req, res) => {
+    let auth = req.session.authenticated;
+    res.render('register', {auth});
+});
 
+
+app.get('/login',isNotAuthenticated, async (req, res) => {
+    let auth = req.session.authenticated;
+    res.render('login', {auth});
+})
 app.get('/', (req, res) => {
     let auth = req.session.authenticated;
     res.render('home', {auth});
