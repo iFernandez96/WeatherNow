@@ -15,6 +15,10 @@
     
     <label for="confirmPassword">Confirm Password:</label>
     <input type="password" name="confirmPassword" required><br>
+
+    <% if (error) { %>
+        <p style="color:red;"><%= error %></p>
+    <% } %>
     
     <button>Register</button>
 </form>

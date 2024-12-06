@@ -6,6 +6,7 @@
         <% if (auth) { %>
             <li>
                 <a href="/logout" class="<%= currentPath == '/logout' ? 'active' : '' %>">Logout</a>
+                <a href="/profile" class="<%= currentPath == '/profile' ? 'active' : '' %>">Profile</a>
             </li>
         <% } else { %>
             <li>

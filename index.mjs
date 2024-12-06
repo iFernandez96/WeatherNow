@@ -57,7 +57,8 @@ app.get('/', async (req, res) => {
 
 app.get('/logout',isAuthenticated, (req, res) => {
     req.session.destroy();
-    res.render('logout');
+    let auth = false;
+    res.render('home', {auth});
 })
 
 app.get("/dbTest", async(req, res) => {
@@ -74,7 +75,7 @@ app.get('/profile', isAuthenticated, (req, res) => {
 app.post('/login',isNotAuthenticated, async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
-    let sql = `SELECT * FROM admin WHERE username = ?`;
+    let sql = `SELECT * FROM user WHERE username = ?`;
     let sqlParams = [username];
     const [rows] = await conn.query(sql, sqlParams);
     if (rows.length <= 0) {
@@ -87,7 +88,7 @@ app.post('/login',isNotAuthenticated, async (req, res) => {
         req.session.fullName = rows[0].firstName + " " + rows[0].lastName;
         req.session.authenticated = true;
         let auth = req.session.authenticated;
-        res.render('profile', {auth});
+        res.redirect('profile', {auth});
     } else {
         res.redirect('/');
     }
@@ -95,9 +96,34 @@ app.post('/login',isNotAuthenticated, async (req, res) => {
 });
 app.get('/register', isNotAuthenticated, (req, res) => {
     let auth = req.session.authenticated;
-    res.render('register', {auth});
+    let error = '';
+    res.render('register', {auth, error});
 });
+app.post('/register', async (req, res) => {
+    // const { username, email, password, confirmPassword } = req.body;
+    let username = req.body.username;
+    let email = req.body.email;
+    let password = req.body.password;
+    let confirmPassword = req.body.confirmPassword;
+    let auth = req.session.authenticated;
 
+    if (password !== confirmPassword) {
+        let error = "Passwords do not match";
+        res.render('register', {auth, error});
+        return
+    }
+
+    // Hash the password using bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // INSERT user into database here
+    // Example pseudo-code:
+    let sql = `INSERT INTO user (username, email, password) VALUES (?, ?, ?)`
+    let sqlParams = [username, email, hashedPassword]
+    
+    await conn.query(sql, sqlParams);
+    res.redirect('/login', {auth});
+});
 
 app.get('/login',isNotAuthenticated, async (req, res) => {
     let auth = req.session.authenticated;
