@@ -43,6 +43,14 @@ function isAuthenticated(req, res, next) {
     }
 }
 
+function isAuthenticatedAdmin(req, res, next) {
+    if (req.session.authenticated == true && req.session.admin == true) {
+        next();
+    } else {
+        res.redirect('/');
+    }
+}
+
 function isNotAuthenticated(req, res, next) {
     if (req.session.authenticated) {
         let username = req.session.username;
@@ -68,15 +76,31 @@ app.get("/dbTest", async(req, res) => {
     res.send(rows);
 });//dbTest
 
-app.get('/admin', isAuthenticated, async (req, res) => {
-
-    if (!req.session.admin) {
-        res.redirect('/profile');
-        return;
-    }
+app.get('/admin', isAuthenticatedAdmin, async (req, res) => {
     let sql = `SELECT * FROM user`;
     const [users] = await conn.query(sql);
     res.render('admin', {users});
+});
+
+app.post('/admin/users/:id/edit', isAuthenticatedAdmin, async (req, res) => {
+    const userId = req.params.id;
+    const { username, email, is_admin } = req.body;
+
+    const sql = `UPDATE user SET username = ?, email = ?, is_admin = ? WHERE user_id = ?`;
+    const sqlParams = [username, email, is_admin, userId];
+
+    await pool.query(sql, sqlParams);
+    res.redirect('/admin');
+});
+
+app.post('/admin/users/:id/delete', isAuthenticatedAdmin, async (req, res) => {
+    const userId = req.params.user_id;
+
+    const sql = `DELETE FROM user WHERE id = ?`;
+    const sqlParams = [userId];
+
+    await pool.query(sql, sqlParams);
+    res.redirect('/admin');
 });
 
 app.get('/profile', isAuthenticated, (req, res) => {
