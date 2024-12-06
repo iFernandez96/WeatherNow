@@ -20,6 +20,7 @@ app.use(session({
 
 app.use((req, res, next) => {
     res.locals.currentPath = req.path;
+    res.locals.auth = req.session.authenticated;
     next();
 });
 
@@ -44,18 +45,16 @@ function isAuthenticated(req, res, next) {
 
 function isNotAuthenticated(req, res, next) {
     if (req.session.authenticated) {
-        let auth = req.session.authenticated;
         let username = req.session.username;
         let email = req.session.email;
-        return res.redirect('/profile', {auth, username, email});
+        return res.redirect('/profile', {username, email});
     }
     next();
 }
 
 //routes
 app.get('/', async (req, res) => {
-    let auth = req.session.authenticated
-    res.render('home.ejs', {auth});
+    res.render('home.ejs');
 });
 
 app.get('/logout',isAuthenticated, (req, res) => {
@@ -69,11 +68,25 @@ app.get("/dbTest", async(req, res) => {
     res.send(rows);
 });//dbTest
 
+app.get('/admin', isAuthenticated, async (req, res) => {
+
+    if (!req.session.admin) {
+        res.redirect('/profile');
+        return;
+    }
+    let sql = `SELECT * FROM user`;
+    const [users] = await conn.query(sql);
+    res.render('admin', {users});
+});
+
 app.get('/profile', isAuthenticated, (req, res) => {
-    let auth = req.session.authenticated;
     let username = req.session.username;
     let email = req.session.email;
-    res.render('profile', {auth, username, email});
+    if (req.session.admin) {
+        res.redirect('/admin');
+        return;
+    }
+    res.render('profile', {username, email});
 });
 
 app.post('/login',isNotAuthenticated, async (req, res) => {
@@ -92,9 +105,7 @@ app.post('/login',isNotAuthenticated, async (req, res) => {
         req.session.username = rows[0].username;
         req.session.email = rows[0].email;
         req.session.authenticated = true;
-        let auth = req.session.authenticated;
-        let username = req.session.username;
-        let email = req.session.email;
+        req.session.admin = rows[0].is_admin;
         res.redirect('/profile');
     } else {
         res.redirect('/');
@@ -102,9 +113,8 @@ app.post('/login',isNotAuthenticated, async (req, res) => {
 
 });
 app.get('/register', isNotAuthenticated, (req, res) => {
-    let auth = req.session.authenticated;
     let error = '';
-    res.render('register', {auth, error});
+    res.render('register', {error});
 });
 app.post('/register', async (req, res) => {
     // const { username, email, password, confirmPassword } = req.body;
@@ -112,11 +122,10 @@ app.post('/register', async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
     let confirmPassword = req.body.confirmPassword;
-    let auth = req.session.authenticated;
 
     if (password !== confirmPassword) {
         let error = "Passwords do not match";
-        res.render('register', {auth, error});
+        res.render('register', {error});
         return
     }
 
@@ -129,16 +138,14 @@ app.post('/register', async (req, res) => {
     let sqlParams = [username, email, hashedPassword]
     
     await conn.query(sql, sqlParams);
-    res.redirect('/login', {auth});
+    res.redirect('/login');
 });
 
 app.get('/login',isNotAuthenticated, async (req, res) => {
-    let auth = req.session.authenticated;
-    res.render('login', {auth});
+    res.render('login');
 })
 app.get('/home', (req, res) => {
-    let auth = req.session.authenticated;
-    res.render('home', {auth});
+    res.render('home');
 });
 
 app.listen(3001, ()=>{

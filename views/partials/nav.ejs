@@ -5,7 +5,7 @@
         </li>
         <% if (auth) { %>
             <li>
-                <a href="/profile" class="<%= currentPath == '/profile' ? 'active' : '' %>">Profile</a>
+                <a href="/profile" class="<%= (currentPath == '/profile' || currentPath == '/admin') ? 'active' : '' %>">Profile</a>
             </li>
             <li>
                 <a href="/logout" class="<%= currentPath == '/logout' ? 'active' : '' %>">Logout</a>
