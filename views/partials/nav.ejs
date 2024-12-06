@@ -5,12 +5,16 @@
         </li>
         <% if (auth) { %>
             <li>
-                <a href="/logout" class="<%= currentPath == '/logout' ? 'active' : '' %>">Logout</a>
                 <a href="/profile" class="<%= currentPath == '/profile' ? 'active' : '' %>">Profile</a>
+            </li>
+            <li>
+                <a href="/logout" class="<%= currentPath == '/logout' ? 'active' : '' %>">Logout</a>
             </li>
         <% } else { %>
             <li>
                 <a href="/login" class="<%= currentPath == '/login' ? 'active' : '' %>">Login</a>
+            </li>
+            <li>
                 <a href="/register" class="<%= currentPath == '/register' ? 'active' : '' %>">Register</a>
             </li>
         <% } %>

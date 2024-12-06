@@ -44,7 +44,10 @@ function isAuthenticated(req, res, next) {
 
 function isNotAuthenticated(req, res, next) {
     if (req.session.authenticated) {
-        return res.redirect('/profile');
+        let auth = req.session.authenticated;
+        let username = req.session.username;
+        let email = req.session.email;
+        return res.redirect('/profile', {auth, username, email});
     }
     next();
 }
@@ -57,8 +60,7 @@ app.get('/', async (req, res) => {
 
 app.get('/logout',isAuthenticated, (req, res) => {
     req.session.destroy();
-    let auth = false;
-    res.render('home', {auth});
+    res.redirect('/');
 })
 
 app.get("/dbTest", async(req, res) => {
@@ -69,7 +71,9 @@ app.get("/dbTest", async(req, res) => {
 
 app.get('/profile', isAuthenticated, (req, res) => {
     let auth = req.session.authenticated;
-    res.render('profile', {auth});
+    let username = req.session.username;
+    let email = req.session.email;
+    res.render('profile', {auth, username, email});
 });
 
 app.post('/login',isNotAuthenticated, async (req, res) => {
@@ -85,10 +89,13 @@ app.post('/login',isNotAuthenticated, async (req, res) => {
     let passwordHash = rows[0].password;
     let match = await bcrypt.compare(password, passwordHash);
     if (match) {
-        req.session.fullName = rows[0].firstName + " " + rows[0].lastName;
+        req.session.username = rows[0].username;
+        req.session.email = rows[0].email;
         req.session.authenticated = true;
         let auth = req.session.authenticated;
-        res.redirect('profile', {auth});
+        let username = req.session.username;
+        let email = req.session.email;
+        res.redirect('/profile');
     } else {
         res.redirect('/');
     }
@@ -129,7 +136,7 @@ app.get('/login',isNotAuthenticated, async (req, res) => {
     let auth = req.session.authenticated;
     res.render('login', {auth});
 })
-app.get('/', (req, res) => {
+app.get('/home', (req, res) => {
     let auth = req.session.authenticated;
     res.render('home', {auth});
 });
