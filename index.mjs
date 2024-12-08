@@ -88,7 +88,7 @@ async function getWeather(zip) {
 //routes
 app.get('/', async (req, res) => {
     let weather = await getWeather(95060);
-    let location = "Marina";
+    let location = weather.location.name;
     console.log(weather.timelines.daily);
     res.render('home.ejs', {weather, location});
 });
@@ -99,6 +99,14 @@ app.get('/', async (req, res) => {
      console.log(location);
      console.log(weather.timelines.daily);
      res.render('location.ejs', {weather, location});
+ });
+
+ app.get('/search', async (req, res) => {
+     let zipcode  = req.query.zipcode + " US";
+     let weather = await getWeather(zipcode);
+     console.log(weather.timelines.daily);
+     let location = weather.location.name;
+     res.render('search.ejs', {weather, location});
  });
 
 app.get('/logout',isAuthenticated, (req, res) => {
