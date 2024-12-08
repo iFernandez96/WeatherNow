@@ -66,35 +66,52 @@ function isNotAuthenticated(req, res, next) {
     next();
 }
 
-function assembleUrl(zip) {
-    //var key = '&timesteps=1d&units=imperial&apikey=' + weatherKey;
+function assembleUrl(zip, units) {
     const params = new URLSearchParams({
-        location: zip,
+        location: zip + " US",
         timesteps: "1d",
-        units: "imperial",
+        units: units,
         apikey: weatherKey
     });
 
     return `${weatherBaseUrl}?${params.toString()}`;
 }
 
-async function getWeather(zip) {
+async function getWeather(zip, units) {
     console.log(assembleUrl(zip));
-    let response = await fetch(assembleUrl(zip));
+    let response = await fetch(assembleUrl(zip, units));
     let data = await response.json();
     return data;
 }
 
 //routes
 app.get('/', async (req, res) => {
-    let weather = await getWeather(95060);
+    let weather;
+    if (req.session.authenticated) {
+        let userId = req.session.userId;
+        let sql = `SELECT * FROM user WHERE userId`;
+        const [rows] = await conn.query(sql);
+        var units = rows[0].user_temp;
+        weather = await getWeather(rows[0].zipcode, units);
+    } else {
+        weather = await getWeather(95060, "imperial")
+    }
     let location = weather.location.name;
     console.log(weather.timelines.daily);
     res.render('home.ejs', {weather, location});
 });
 
  app.get('/location', async (req, res) => {
-     let weather = await getWeather(95060);
+     let weather;
+     if (req.session.authenticated) {
+         let userId = req.session.userId;
+         let sql = `SELECT * FROM user WHERE userId`;
+         const [rows] = await conn.query(sql);
+         var units = rows[0].user_temp;
+         weather = await getWeather(rows[0].zipcode, units);
+     } else {
+         weather = await getWeather(95060, "imperial")
+     }
      let location  = req.query.location;
      console.log(location);
      console.log(weather.timelines.daily);
@@ -102,7 +119,7 @@ app.get('/', async (req, res) => {
  });
 
  app.get('/search', async (req, res) => {
-     let zipcode  = req.query.zipcode + " US";
+     let zipcode  = req.query.zipcode;
      let weather = await getWeather(zipcode);
      console.log(weather.timelines.daily);
      let location = weather.location.name;
@@ -150,7 +167,7 @@ app.post('/admin/users/:id/delete', isAuthenticatedAdmin, async (req, res) => {
 app.get('/profile', isAuthenticated, async (req, res) => {
     let username = req.session.username;
     let email = req.session.email;
-    
+
     if (req.session.admin) {
         res.redirect('/admin');
         return;
@@ -195,7 +212,7 @@ app.post('/profile', isAuthenticated, async (req, res) => {
             );
         }
         res.redirect('/profile');
-    
+
 });
 
 
