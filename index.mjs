@@ -3,8 +3,13 @@ import express from 'express';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcrypt';
 import session from 'express-session';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
+const weatherKey = process.env.WEATHER_KEY;
+var weatherBaseUrl = 'https://api.tomorrow.io/v4/weather/forecast';
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
@@ -61,10 +66,48 @@ function isNotAuthenticated(req, res, next) {
     next();
 }
 
+function assembleUrl(zip) {
+    //var key = '&timesteps=1d&units=imperial&apikey=' + weatherKey;
+    const params = new URLSearchParams({
+        location: zip,
+        timesteps: "1d",
+        units: "imperial",
+        apikey: weatherKey
+    });
+
+    return `${weatherBaseUrl}?${params.toString()}`;
+}
+
+async function getWeather(zip) {
+    console.log(assembleUrl(zip));
+    let response = await fetch(assembleUrl(zip));
+    let data = await response.json();
+    return data;
+}
+
 //routes
 app.get('/', async (req, res) => {
-    res.render('home.ejs');
+    let weather = await getWeather(95060);
+    let location = weather.location.name;
+    console.log(weather.timelines.daily);
+    res.render('home.ejs', {weather, location});
 });
+
+ app.get('/location', async (req, res) => {
+     let weather = await getWeather(95060);
+     let location  = req.query.location;
+     console.log(location);
+     console.log(weather.timelines.daily);
+     res.render('location.ejs', {weather, location});
+ });
+
+ app.get('/search', async (req, res) => {
+     let zipcode  = req.query.zipcode + " US";
+     let weather = await getWeather(zipcode);
+     console.log(weather.timelines.daily);
+     let location = weather.location.name;
+     res.render('search.ejs', {weather, location});
+ });
 
 app.get('/logout',isAuthenticated, (req, res) => {
     req.session.destroy();
@@ -123,7 +166,7 @@ app.post('/login',isNotAuthenticated, async (req, res) => {
     if (rows.length <= 0) {
         res.redirect('/');
         return;
-    } 
+    }
     let passwordHash = rows[0].password;
     let match = await bcrypt.compare(password, passwordHash);
     if (match) {
@@ -161,7 +204,7 @@ app.post('/register', async (req, res) => {
     // Example pseudo-code:
     let sql = `INSERT INTO user (username, email, password) VALUES (?, ?, ?)`
     let sqlParams = [username, email, hashedPassword]
-    
+
     await conn.query(sql, sqlParams);
     res.redirect('/login');
 });

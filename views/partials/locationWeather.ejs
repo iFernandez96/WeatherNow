@@ -1,0 +1,23 @@
+<%
+    let days = weather.timelines.daily;
+%>
+
+<div class="location-weather">
+    <h2><%= location%><br> 7 Day Forecast</h2>
+
+    <% for (let day of days) {
+        let date = new Date(day.time)
+    %>
+
+    <div class="forecast-day">
+        <p><h3><%= date.toLocaleDateString('en-US', { weekday: 'long' }); %></h3> </p>
+        <p><strong>Temperature (Average): </strong> <%= day.values.temperatureAvg %></p>
+        <p><strong>Temperature (Max): </strong> <%= day.values.temperatureMax %></p>
+        <p><strong>Temperature (Min): </strong> <%= day.values.temperatureMin %></p>
+        <p><strong>Humidity:</strong> <%= day.values.humidityAvg%></p>
+        <p><strong>Precipicipation Chance: </strong> <%=  day.values.precipitationProbabilityAvg  %></p>
+        <p><strong>Wind Speed: </strong> <%= day.values.windSpeedAvg %></p>
+    </div>
+    <br><br>
+    <% } %>
+</div>
