@@ -89,8 +89,9 @@ app.get('/', async (req, res) => {
     let weather;
     if (req.session.authenticated) {
         let userId = req.session.userId;
-        let sql = `SELECT * FROM user WHERE userId`;
-        const [rows] = await conn.query(sql);
+        let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
+        let sqlParams = [userId];
+        const [rows] = await conn.query(sql, sqlParams);
         var units = rows[0].user_temp;
         weather = await getWeather(rows[0].zipcode, units);
     } else {
@@ -105,8 +106,9 @@ app.get('/', async (req, res) => {
      let weather;
      if (req.session.authenticated) {
          let userId = req.session.userId;
-         let sql = `SELECT * FROM user WHERE userId`;
-         const [rows] = await conn.query(sql);
+         let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
+         let sqlParams = [userId];
+         const [rows] = await conn.query(sql, sqlParams);
          var units = rows[0].user_temp;
          weather = await getWeather(rows[0].zipcode, units);
      } else {
@@ -214,10 +216,6 @@ app.post('/profile', isAuthenticated, async (req, res) => {
         res.redirect('/profile');
 
 });
-
-
-
-
 
 app.post('/login',isNotAuthenticated, async (req, res) => {
     let username = req.body.username;
