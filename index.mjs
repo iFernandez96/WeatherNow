@@ -237,7 +237,7 @@ app.post('/login',isNotAuthenticated, async (req, res) => {
         req.session.userId = rows[0].user_id;
         res.redirect('/profile');
     } else {
-        res.redirect('/');
+        res.redirect('/login');
     }
 
 });
