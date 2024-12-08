@@ -147,15 +147,60 @@ app.post('/admin/users/:id/delete', isAuthenticatedAdmin, async (req, res) => {
     res.redirect('/admin');
 });
 
-app.get('/profile', isAuthenticated, (req, res) => {
+app.get('/profile', isAuthenticated, async (req, res) => {
     let username = req.session.username;
     let email = req.session.email;
+    
     if (req.session.admin) {
         res.redirect('/admin');
         return;
     }
-    res.render('profile', {username, email});
+
+    const [userPreferences] = await pool.query(
+        'SELECT user_temp, zipcode, image FROM userPreferences WHERE user_id = ?',
+        [req.session.userId]
+    );
+
+    res.render('profile', {
+        username,
+        email,
+        tempUnit: userPreferences?.user_temp || 'metric',
+        zipcode: userPreferences?.zipcode || '',
+        image: userPreferences?.image || 'default.jpg',
+    });
 });
+
+app.post('/profile', isAuthenticated, async (req, res) => {
+    const { email, tempUnit, savedLocation, backgroundImage } = req.body;
+    const userId = req.session.userId;
+        await pool.query(
+            'UPDATE user SET email = ? WHERE user_id = ?',
+            [email, userId]
+        );
+
+        const [existingPreference] = await pool.query(
+            'SELECT * FROM userPreferences WHERE user_id = ?',
+            [userId]
+        );
+
+        if (existingPreference.length > 0) {
+            await pool.query(
+                'UPDATE userPreferences SET user_temp = ?, zipcode = ?, image = ? WHERE user_id = ?',
+                [tempUnit, savedLocation, backgroundImage, userId]
+            );
+        } else {
+            await pool.query(
+                'INSERT INTO userPreferences (user_id, user_temp, zipcode, image) VALUES (?, ?, ?, ?)',
+                [userId, tempUnit, savedLocation, backgroundImage]
+            );
+        }
+        res.redirect('/profile');
+    
+});
+
+
+
+
 
 app.post('/login',isNotAuthenticated, async (req, res) => {
     let username = req.body.username;
@@ -174,6 +219,7 @@ app.post('/login',isNotAuthenticated, async (req, res) => {
         req.session.email = rows[0].email;
         req.session.authenticated = true;
         req.session.admin = rows[0].is_admin;
+        req.session.userId = rows[0].user_id;
         res.redirect('/profile');
     } else {
         res.redirect('/');
