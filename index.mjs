@@ -60,9 +60,20 @@ function isNotAuthenticated(req, res, next) {
     next();
 }
 
+var weatherAPI = 'https://api.tomorrow.io/v4/weather/forecast?location=';
+var key = '&timesteps=1d&units=imperial&apikey=1SjGI8R3XYVoS4vX1LEILAw42Ht1FDb2';
+
+async function getWeather(lat, long) {
+    let response = await fetch(weatherAPI + lat + ", " + long + key);
+    let data = await response.json();
+    return data;
+}
+
 //routes
 app.get('/', async (req, res) => {
-    res.render('home.ejs');
+    let weather = await getWeather(42.3478,-71.0466);
+    console.log(weather.timelines.daily);
+    res.render('home.ejs', {weather});
 });
 
 app.get('/logout',isAuthenticated, (req, res) => {
@@ -122,7 +133,7 @@ app.post('/login',isNotAuthenticated, async (req, res) => {
     if (rows.length <= 0) {
         res.redirect('/');
         return;
-    } 
+    }
     let passwordHash = rows[0].password;
     let match = await bcrypt.compare(password, passwordHash);
     if (match) {
@@ -160,7 +171,7 @@ app.post('/register', async (req, res) => {
     // Example pseudo-code:
     let sql = `INSERT INTO user (username, email, password) VALUES (?, ?, ?)`
     let sqlParams = [username, email, hashedPassword]
-    
+
     await conn.query(sql, sqlParams);
     res.redirect('/login');
 });
