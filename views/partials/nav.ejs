@@ -2,7 +2,21 @@
     <div id="WeatherNow">WeatherNow</div>
     <ul>
         <li>
+            <form action="/search" method="GET" class="search-form">
+                <input
+                        type="text"
+                        name="zipcode"
+                        placeholder="Search..."
+                        aria-label="Search"
+                        value="<%= typeof query !== 'undefined' ? query : '' %>">
+                <button type="submit">Search</button>
+            </form>
+        </li>
+        <li>
             <a href="/" class="<%= currentPath == '/' ? 'active' : '' %>">Home</a>
+        </li>
+        <li>
+            <a href="/location" class="/location">My Location </a>
         </li>
         <% if (auth) { %>
             <li>

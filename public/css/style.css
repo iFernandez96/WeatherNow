@@ -119,12 +119,6 @@ button:hover {
     border-radius: 5px;
     box-sizing: border-box;
 }
-#WeatherNow {
-    color: #fff;
-    font-size: 2rem;
-    display: flex;          
-    justify-content: center;
-}
 #profile-page form{
     max-width: 400px;
     width: 100%;
@@ -133,3 +127,29 @@ button:hover {
     gap: 15px;
     margin: 0 auto;
 }
+
+.location-weather {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+    margin: 20px 250px;
+    justify-content: center;
+}
+
+.location-weather h2 {
+    flex: 1 1 100%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.forecast-day {
+    flex: 0 1 350px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    background: #f9f9f9;
+    text-align: center;
+}
+
