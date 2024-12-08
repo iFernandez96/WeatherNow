@@ -1,12 +1,16 @@
-<% let days = weather.timelines.daily %>
+<%
+    let days = weather.timelines.daily;
+%>
 
 <div class="location-weather">
     <h2>LOCATION PLACEHOLDER</h2>
 
-    <% for (let day of days) { %>
+    <% for (let day of days) {
+        let date = new Date(day.time)
+    %>
 
     <div class="forecast-day">
-        <p><strong>Date:</strong> <%= day.time%></p>
+        <p><strong>Date:</strong> <%= date.toLocaleDateString('en-US', { weekday: 'long' }); %></p>
         <p><strong>Temperature (Average): </strong> <%= day.values.temperatureAvg %></p>
         <p><strong>Temperature (Max): </strong> <%= day.values.temperatureMax %></p>
         <p><strong>Temperature (Min): </strong> <%= day.values.temperatureMin %></p>
