@@ -4,13 +4,18 @@
 
 <h1>Login</h1>
 <br>
+<div id="login-page">
 <form action="/login" method="POST">
-    <label>Username:</label>
+    <div>
+    <label for="username">Username:</label>
     <input type="text" id="username" name="username" required><br>
-    <label>Password: </label>
+    </div>
+    <div>
+    <label for="password">Password: </label>
     <input type="password" id="password" name="password" required>
+    </div>
     <button>Login</button>
 </form>
-
+</div>
 
 <%- include("partials/footer.ejs") %>

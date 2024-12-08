@@ -1,3 +1,37 @@
+
+<%- include("partials/head.ejs") %>
+<%- include("partials/nav.ejs") %>
+
+<h1>Register</h1>
+<br>
+<div id="register-page">
+<form action="/register" method="POST">
+    <div>
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br>
+    </div>
+    <div>
+    <label for="email">Email:</label>
+    <input type="email" name="email" required><br>
+    </div>
+    <div>
+    <label for="password">Password:</label>
+    <input type="password" name="password" required><br>
+    </div>
+    <div>
+    <label for="confirmPassword">Confirm Password:</label>
+    <input type="password" name="confirmPassword" required><br>
+    </div>
+    <% if (error) { %>
+        <p style="color:red;"><%= error %></p>
+    <% } %>
+    
+    <button>Register</button>
+</form>
+</div>
+
+<%- include("partials/footer.ejs") %>
+=======
 <%- include("partials/head.ejs") %>
 <%- include("partials/nav.ejs") %>
 
