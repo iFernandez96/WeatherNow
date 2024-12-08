@@ -3,8 +3,16 @@ import express from 'express';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcrypt';
 import session from 'express-session';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
+const weatherKey = process.env.WEATHER_KEY;
+
+var weatherAPI = 'https://api.tomorrow.io/v4/weather/forecast?location=';
+var key = '&timesteps=1d&units=imperial&apikey=' + weatherKey;
+
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
@@ -61,9 +69,6 @@ function isNotAuthenticated(req, res, next) {
     next();
 }
 
-var weatherAPI = 'https://api.tomorrow.io/v4/weather/forecast?location=';
-var key = '&timesteps=1d&units=imperial&apikey=1SjGI8R3XYVoS4vX1LEILAw42Ht1FDb2';
-
 async function getWeather(lat, long) {
     let response = await fetch(weatherAPI + lat + ", " + long + key);
     let data = await response.json();
@@ -76,6 +81,14 @@ app.get('/', async (req, res) => {
     console.log(weather.timelines.daily);
     res.render('home.ejs', {weather});
 });
+
+ app.get('/location', async (req, res) => {
+     let weather = await getWeather(42.3478,-71.0466);
+     let location  = req.query.location;
+     console.log(location);
+     console.log(weather.timelines.daily);
+     res.render('location.ejs', {weather, location});
+ });
 
 app.get('/logout',isAuthenticated, (req, res) => {
     req.session.destroy();
