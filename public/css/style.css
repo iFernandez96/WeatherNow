@@ -143,6 +143,12 @@ button:hover {
     margin-bottom: 20px;
 }
 
+#WeatherNow {
+    font-weight: bold;
+    justify-content: left;
+    font-size: 2em;
+}
+
 .forecast-day {
     flex: 0 1 350px;
     border: 1px solid #ddd;

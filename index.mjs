@@ -88,6 +88,7 @@ async function getWeather(zip) {
 //routes
 app.get('/', async (req, res) => {
     let weather = await getWeather(95060);
+    console.log(weather);
     let location = weather.location.name;
     console.log(weather.timelines.daily);
     res.render('home.ejs', {weather, location});
@@ -176,7 +177,7 @@ app.post('/login',isNotAuthenticated, async (req, res) => {
         req.session.admin = rows[0].is_admin;
         res.redirect('/profile');
     } else {
-        res.redirect('/');
+        res.redirect('/login');
     }
 
 });
