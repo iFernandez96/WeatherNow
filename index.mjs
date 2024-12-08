@@ -91,8 +91,9 @@ async function getWeather(zip) {
 //routes
 app.get('/', async (req, res) => {
     let weather = await getWeather(95060);
+    let location = "Marina";
     console.log(weather.timelines.daily);
-    res.render('home.ejs', {weather});
+    res.render('home.ejs', {weather, location});
 });
 
  app.get('/location', async (req, res) => {

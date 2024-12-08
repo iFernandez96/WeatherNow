@@ -5,12 +5,18 @@
         </li>
         <% if (auth) { %>
             <li>
+                <a href="/location" class="/location">My Location </a>
+            </li>
+            <li>
                 <a href="/profile" class="<%= (currentPath == '/profile' || currentPath == '/admin') ? 'active' : '' %>">Profile</a>
             </li>
             <li>
                 <a href="/logout" class="<%= currentPath == '/logout' ? 'active' : '' %>">Logout</a>
             </li>
         <% } else { %>
+            <li>
+                <a href="/location" class="/location">Location </a>
+            </li>
             <li>
                 <a href="/login" class="<%= currentPath == '/login' ? 'active' : '' %>">Login</a>
             </li>
