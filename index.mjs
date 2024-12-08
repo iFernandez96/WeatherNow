@@ -9,10 +9,7 @@ dotenv.config();
 
 const app = express();
 const weatherKey = process.env.WEATHER_KEY;
-
-
 var weatherBaseUrl = 'https://api.tomorrow.io/v4/weather/forecast';
-
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
