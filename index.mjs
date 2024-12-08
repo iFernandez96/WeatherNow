@@ -10,8 +10,8 @@ dotenv.config();
 const app = express();
 const weatherKey = process.env.WEATHER_KEY;
 
-var weatherAPI = 'https://api.tomorrow.io/v4/weather/forecast?location=';
-var key = '&timesteps=1d&units=imperial&apikey=' + weatherKey;
+
+var weatherBaseUrl = 'https://api.tomorrow.io/v4/weather/forecast';
 
 
 app.set('view engine', 'ejs')
@@ -69,21 +69,34 @@ function isNotAuthenticated(req, res, next) {
     next();
 }
 
-async function getWeather(lat, long) {
-    let response = await fetch(weatherAPI + lat + ", " + long + key);
+function assembleUrl(zip) {
+    //var key = '&timesteps=1d&units=imperial&apikey=' + weatherKey;
+    const params = new URLSearchParams({
+        location: zip,
+        timesteps: "1d",
+        units: "imperial",
+        apikey: weatherKey
+    });
+
+    return `${weatherBaseUrl}?${params.toString()}`;
+}
+
+async function getWeather(zip) {
+    console.log(assembleUrl(zip));
+    let response = await fetch(assembleUrl(zip));
     let data = await response.json();
     return data;
 }
 
 //routes
 app.get('/', async (req, res) => {
-    let weather = await getWeather(42.3478,-71.0466);
+    let weather = await getWeather(95060);
     console.log(weather.timelines.daily);
     res.render('home.ejs', {weather});
 });
 
  app.get('/location', async (req, res) => {
-     let weather = await getWeather(42.3478,-71.0466);
+     let weather = await getWeather(95060);
      let location  = req.query.location;
      console.log(location);
      console.log(weather.timelines.daily);
