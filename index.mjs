@@ -150,23 +150,21 @@ app.post('/admin/users/:id/delete', isAuthenticatedAdmin, async (req, res) => {
 app.get('/profile', isAuthenticated, async (req, res) => {
     let username = req.session.username;
     let email = req.session.email;
+    let image = req.session.image;
+    let zipCode = req.session.zipCode;
+    let tempUnit = req.session.userTemp;
+    
     
     if (req.session.admin) {
         res.redirect('/admin');
         return;
     }
-
-    const [userPreferences] = await pool.query(
-        'SELECT user_temp, zipcode, image FROM userPreferences WHERE user_id = ?',
-        [req.session.userId]
-    );
-
     res.render('profile', {
         username,
         email,
-        tempUnit: userPreferences?.user_temp || 'metric',
-        zipcode: userPreferences?.zipcode || '',
-        image: userPreferences?.image || 'default.jpg',
+        tempUnit,
+        zipCode,
+        image,
     });
 });
 
@@ -194,6 +192,10 @@ app.post('/profile', isAuthenticated, async (req, res) => {
                 [userId, tempUnit, savedLocation, backgroundImage]
             );
         }
+        req.session.email = email;
+        req.session.userTemp = tempUnit;
+        req.session.zipCode = savedLocation;
+        req.session.image = backgroundImage;
         res.redirect('/profile');
     
 });
@@ -205,7 +207,12 @@ app.post('/profile', isAuthenticated, async (req, res) => {
 app.post('/login',isNotAuthenticated, async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
-    let sql = `SELECT * FROM user WHERE username = ?`;
+    let sql = `
+        SELECT user.*, userPreferences.user_temp, userPreferences.image, userPreferences.zipcode
+        FROM user
+        LEFT JOIN userPreferences ON user.user_id = userPreferences.user_id
+        WHERE user.username = ?
+    `;
     let sqlParams = [username];
     const [rows] = await conn.query(sql, sqlParams);
     if (rows.length <= 0) {
@@ -220,6 +227,9 @@ app.post('/login',isNotAuthenticated, async (req, res) => {
         req.session.authenticated = true;
         req.session.admin = rows[0].is_admin;
         req.session.userId = rows[0].user_id;
+        req.session.userTemp = rows[0].user_temp;
+        req.session.image = rows[0].image;
+        req.session.zipCode = rows[0].zipcode;
         res.redirect('/profile');
     } else {
         res.redirect('/');

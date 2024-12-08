@@ -14,27 +14,29 @@
     <div>
         <label for="tempDropdown">Temperature Unit:</label>
         <select id="tempDropdown" name="tempUnit">
-            <option value="metric">Celsius</option>
-            <option value="imperial">Fahrenheit</option>
+            <option value="metric" <%= tempUnit === 'metric' ? 'selected' : '' %>>Celsius</option>
+            <option value="imperial" <%= tempUnit === 'imperial' ? 'selected' : '' %>>Fahrenheit</option>
         </select>
     </div>
+    
 
     <!-- Saved Location -->
     <div>
         <label for="locationInput">Saved Location:</label>
-        <input type="text" id="locationInput" name="savedLocation" placeholder="Enter your location" value="" required>
+        <input type="text" id="locationInput" name="savedLocation" placeholder="Enter your location" value="<%=zipCode%>" required>
     </div>
 
     <!-- Background Image -->
     <div>
         <label for="bgImage">Background Image:</label>
         <select id="bgImage" name="backgroundImage">
-            <option value="default">Default</option>
-            <option value="sunset">Sunset</option>
-            <option value="mountains">Mountains</option>
-            <option value="cityscape">Cityscape</option>
+            <option value="default" <%= image === 'default' ? 'selected' : '' %>>Default</option>
+            <option value="sunset" <%= image === 'sunset' ? 'selected' : '' %>>Sunset</option>
+            <option value="mountains" <%= image === 'mountains' ? 'selected' : '' %>>Mountains</option>
+            <option value="cityscape" <%= image === 'cityscape' ? 'selected' : '' %>>Cityscape</option>
         </select>
     </div>
+    
 
     <!-- Submit or Save Preferences -->
     <div>
