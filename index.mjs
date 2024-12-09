@@ -93,42 +93,55 @@ async function getWeather(zip, units) {
 //routes
 app.get('/', async (req, res) => {
     let weather;
+    let units = "imperial";
     if (req.session.authenticated) {
         let userId = req.session.userId;
         let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
         let sqlParams = [userId];
         const [rows] = await conn.query(sql, sqlParams);
-        let units = rows[0].user_temp;
+        units = rows[0].user_temp;
         weather = await getWeather(rows[0].zipcode, units);
     } else {
         weather = await getWeather(95060, "imperial")
     }
     let location = weather.location.name;
-    res.render('home.ejs', {weather, location});
+    res.render('home.ejs', {weather, location, units});
 });
 
  app.get('/location', async (req, res) => {
      let weather;
+     let units = "imperial";
      console.log(req.query.location);
      if (req.session.authenticated) {
          let userId = req.session.userId;
          let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
          let sqlParams = [userId];
          const [rows] = await conn.query(sql, sqlParams);
-         let units = rows[0].user_temp;
+         units = rows[0].user_temp;
          weather = await getWeather(req.query.location, units);
      } else {
          weather = await getWeather(req.query.location, "imperial")
      }
      let location  = weather.location.name;
-     res.render('location.ejs', {weather, location});
+     res.render('location.ejs', {weather, location, units});
  });
 
  app.get('/search', async (req, res) => {
+     let weather;
+     let units = "imperial";
      let zipcode  = req.query.zipcode;
-     let weather = await getWeather(zipcode);
+     if (req.session.authenticated) {
+         let userId = req.session.userId;
+         let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
+         let sqlParams = [userId];
+         const [rows] = await conn.query(sql, sqlParams);
+         units = rows[0].user_temp;
+         weather = await getWeather(zipcode, units);
+     } else {
+         weather = await getWeather(zipcode, "imperial")
+     }
      let location = weather.location.name;
-     res.render('search.ejs', {weather, location});
+     res.render('search.ejs', {weather, location, units});
  });
 
 app.get('/logout',isAuthenticated, (req, res) => {

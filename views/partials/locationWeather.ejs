@@ -1,5 +1,13 @@
 <%
     let days = weather.timelines.daily;
+    let unitType;
+    if(units === "imperial"){
+        unitType = "°F";
+        windType = "mph";
+    } else {
+        unitType = "°C";
+        windType = "kmh";
+    }
 %>
 
 <div class="location-weather">
@@ -11,12 +19,12 @@
 
     <div class="forecast-day">
         <p><h3><%= date.toLocaleDateString('en-US', { weekday: 'long' }); %></h3> </p>
-        <p><strong>Temperature (Average): </strong> <%= day.values.temperatureAvg %></p>
-        <p><strong>Temperature (Max): </strong> <%= day.values.temperatureMax %></p>
-        <p><strong>Temperature (Min): </strong> <%= day.values.temperatureMin %></p>
-        <p><strong>Humidity:</strong> <%= day.values.humidityAvg%></p>
-        <p><strong>Precipicipation Chance: </strong> <%=  day.values.precipitationProbabilityAvg  %></p>
-        <p><strong>Wind Speed: </strong> <%= day.values.windSpeedAvg %></p>
+        <p><strong>Temperature (Average): </strong> <%= day.values.temperatureAvg + " " + unitType %></p>
+        <p><strong>Temperature (Max): </strong> <%= day.values.temperatureMax + " " + unitType %></p>
+        <p><strong>Temperature (Min): </strong> <%= day.values.temperatureMin + " " + unitType %></p>
+        <p><strong>Humidity:</strong> <%= day.values.humidityAvg + "%"%></p>
+        <p><strong>Precipicipation Chance: </strong> <%=  day.values.precipitationProbabilityAvg + "%" %></p>
+        <p><strong>Wind Speed: </strong> <%= day.values.windSpeedAvg + " " + windType %></p>
     </div>
     <br><br>
     <% } %>
