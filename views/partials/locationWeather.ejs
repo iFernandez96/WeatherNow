@@ -10,13 +10,31 @@
     %>
 
     <div class="forecast-day">
-        <p><h3><%= date.toLocaleDateString('en-US', { weekday: 'long' }); %></h3> </p>
-        <p><strong>Temperature (Average): </strong> <%= day.values.temperatureAvg %></p>
-        <p><strong>Temperature (Max): </strong> <%= day.values.temperatureMax %></p>
-        <p><strong>Temperature (Min): </strong> <%= day.values.temperatureMin %></p>
-        <p><strong>Humidity:</strong> <%= day.values.humidityAvg%></p>
-        <p><strong>Precipicipation Chance: </strong> <%=  day.values.precipitationProbabilityAvg  %></p>
-        <p><strong>Wind Speed: </strong> <%= day.values.windSpeedAvg %></p>
+        <p><h3><%= date.toLocaleDateString('en-US', { weekday: 'long' }); %></h3></p>
+        <p>
+            <i class="wi wi-thermometer"></i>
+            <strong>Temperature (Average): </strong> <%= day.values.temperatureAvg %>°F
+        </p>
+        <p>
+            <i class="wi wi-thermometer-exterior"></i>
+            <strong>Temperature (Max): </strong> <%= day.values.temperatureMax %>°F
+        </p>
+        <p>
+            <i class="wi wi-thermometer"></i>
+            <strong>Temperature (Min): </strong> <%= day.values.temperatureMin %>°F
+        </p>
+        <p>
+            <i class="wi wi-hot"></i>
+            <strong>Humidity: </strong> <%= day.values.humidityAvg%>%
+        </p>
+        <p>
+            <i class="wi wi-rain"></i>
+            <strong>Precipitation Chance: </strong> <%= day.values.precipitationProbabilityAvg %>%
+        </p>
+        <p>
+            <i class="wi wi-strong-wind"></i>
+            <strong>Wind Speed: </strong> <%= day.values.windSpeedAvg %> mph
+        </p>
     </div>
     <br><br>
     <% } %>
