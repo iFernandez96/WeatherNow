@@ -1,4 +1,4 @@
- //James Fisher
+//James Fisher
 import express from 'express';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcrypt';
@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 const weatherKey = process.env.WEATHER_KEY;
-var weatherBaseUrl = 'https://api.tomorrow.io/v4/weather/forecast';
+let weatherBaseUrl = 'https://api.tomorrow.io/v4/weather/forecast';
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
@@ -43,7 +43,7 @@ const pool = mysql.createPool({
 const conn = await pool.getConnection();
 
 function isAuthenticated(req, res, next) {
-    if (req.session.authenticated == true) {
+    if (req.session.authenticated === true) {
         next();
     } else {
         res.redirect('/');
@@ -51,7 +51,7 @@ function isAuthenticated(req, res, next) {
 }
 
 function isAuthenticatedAdmin(req, res, next) {
-    if (req.session.authenticated == true && req.session.admin == true) {
+    if (req.session.authenticated === true && req.session.admin === true) {
         next();
     } else {
         res.redirect('/');
@@ -88,8 +88,7 @@ async function getLocations() {
 async function getWeather(zip, units) {
     console.log(assembleUrl(zip));
     let response = await fetch(assembleUrl(zip, units));
-    let data = await response.json();
-    return data;
+    return await response.json();
 }
 
 //routes
@@ -100,7 +99,7 @@ app.get('/', async (req, res) => {
         let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
         let sqlParams = [userId];
         const [rows] = await conn.query(sql, sqlParams);
-        var units = rows[0].user_temp;
+        let units = rows[0].user_temp;
         weather = await getWeather(rows[0].zipcode, units);
     } else {
         weather = await getWeather(95060, "imperial")
@@ -117,7 +116,7 @@ app.get('/', async (req, res) => {
          let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
          let sqlParams = [userId];
          const [rows] = await conn.query(sql, sqlParams);
-         var units = rows[0].user_temp;
+         let units = rows[0].user_temp;
          weather = await getWeather(req.query.location, units);
      } else {
          weather = await getWeather(req.query.location, "imperial")
@@ -129,7 +128,6 @@ app.get('/', async (req, res) => {
  app.get('/search', async (req, res) => {
      let zipcode  = req.query.zipcode;
      let weather = await getWeather(zipcode);
-     console.log(weather.timelines.daily);
      let location = weather.location.name;
      res.render('search.ejs', {weather, location});
  });
