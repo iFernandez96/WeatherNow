@@ -6,7 +6,7 @@
                 <input
                         type="text"
                         name="zipcode"
-                        placeholder="Search..."
+                        placeholder="Search by Zipcode"
                         aria-label="Search"
                         value="<%= typeof query !== 'undefined' ? query : '' %>">
                 <button type="submit">Search</button>
@@ -29,11 +29,10 @@
                 const select = document.getElementById('locationSelect');
 
                 form.addEventListener('submit', (e) => {
-                    e.preventDefault(); // Prevent form from submitting traditionally
+                    e.preventDefault();
                     const selectedLocation = select.value;
 
                     if (selectedLocation) {
-                        // Redirect to the /location/:location route
                         window.location.href = `/location?location=${encodeURIComponent(selectedLocation)}`;
                     } else {
                         alert('Please select a location!');
