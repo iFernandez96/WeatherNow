@@ -113,7 +113,6 @@ app.get('/', async (req, res) => {
  app.get('/location', async (req, res) => {
      let weather;
      let units = "imperial";
-     console.log(req.query.location);
      if (req.session.authenticated) {
          let userId = req.session.userId;
          let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
@@ -124,7 +123,10 @@ app.get('/', async (req, res) => {
      } else {
          weather = await getWeather(req.query.location, "imperial")
      }
-     let location  = weather.location.name;
+     let sql = `SELECT * FROM saved_locations WHERE zipcode = ?`;
+     let sqlParams = [req.query.location];
+     let [data] = await conn.query(sql, sqlParams);
+     let location = data[0].location_name;
      res.render('location.ejs', {weather, location, units});
  });
 
@@ -291,12 +293,16 @@ app.post('/register', async (req, res) => {
     // INSERT user into database here
     // Example pseudo-code:
     let sql = `INSERT INTO user (username, email, password) VALUES (?, ?, ?)`
-    await conn.query(sql, sqlParams);
-    let sql_userid = `SELECT user_id FROM user WHERE username = ?`
-    await conn.query(sql_userid, [username]);
-    let sql2 = `INSERT INTO userPreferences (user_id, zipcode, user_temp, image) VALUES (?, ?, ?, ?)`
     let sqlParams = [username, email, hashedPassword]
-    let sqlParams2 = []
+    // await conn.query(sql, sqlParams);
+    let [result] = await conn.query(sql, sqlParams);
+    let sql_userid = `SELECT user_id FROM user WHERE username = ?`
+    // await conn.query(sql_userid, [username]);
+    let [userid] = await conn.query(sql_userid, [username]);
+    // console.log(userid[0].user_id);
+    let sql2 = `INSERT INTO userPreferences (user_id, zipcode, user_temp, image) VALUES (?, ?, ?, ?)`
+    let sqlParams2 = [userid[0].user_id, 93955, 'imperial', 'default']
+    await conn.query(sql2, sqlParams2);
 
     res.redirect('/login');
 });
