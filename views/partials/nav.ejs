@@ -1,8 +1,19 @@
 <nav>
-    <div class="nav-container">
-        <div class="nav-left">
-            <form id="locationForm" class="form-location" action="/location" method="GET">
-                <label for="locationSelect">View Location:</label>
+    <ul>
+        <li>
+            <form action="/search" method="GET" class="search-form">
+                <input
+                        type="text"
+                        name="zipcode"
+                        placeholder="Search by Zipcode"
+                        aria-label="Search"
+                        value="<%= typeof query !== 'undefined' ? query : '' %>">
+                <button type="submit">Search</button>
+            </form>
+        </li>
+        <li>
+            <form id="locationForm">
+                View Location:
                 <select name="location" id="locationSelect">
                     <option value="">-- Select a location --</option>
                     <% locations.forEach(location => { %>
@@ -11,28 +22,40 @@
                 </select>
                 <button type="submit">Go</button>
             </form>
-        </div>
-        <div class="nav-right">
-            <form action="/search" method="GET" class="search-form">
-                <input
-                    type="text"
-                    name="zipcode"
-                    placeholder="Search by Zipcode"
-                    aria-label="Search"
-                    value="<%= typeof query !== 'undefined' ? query : '' %>">
-                <button type="submit">Search</button>
-            </form>
-            <ul>
-                <li><a href="/" class="<%= currentPath == '/' ? 'active' : '' %>">Home</a></li>
-                <% if (auth) { %>
-                    <li><a href="/profile" class="<%= (currentPath == '/profile' || currentPath == '/admin') ? 'active' : '' %>">Profile</a></li>
-                    <li><a href="/logout" class="<%= currentPath == '/logout' ? 'active' : '' %>">Logout</a></li>
-                <% } else { %>
-                    <li><a href="/login" class="<%= currentPath == '/login' ? 'active' : '' %>">Login</a></li>
-                    <li><a href="/register" class="<%= currentPath == '/register' ? 'active' : '' %>">Register</a></li>
-                <% } %>
-            </ul>
-        </div>
-    </div>
-</nav>
 
+            <script>
+                const form = document.getElementById('locationForm');
+                const select = document.getElementById('locationSelect');
+
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const selectedLocation = select.value;
+
+                    if (selectedLocation) {
+                        window.location.href = `/location?location=${encodeURIComponent(selectedLocation)}`;
+                    } else {
+                        alert('Please select a location!');
+                    }
+                });
+            </script>
+        </li>
+        <li>
+            <a href="/" class="<%= currentPath == '/' ? 'active' : '' %>">Home</a>
+        </li>
+        <% if (auth) { %>
+            <li>
+                <a href="/profile" class="<%= (currentPath == '/profile' || currentPath == '/admin') ? 'active' : '' %>">Profile</a>
+            </li>
+            <li>
+                <a href="/logout" class="<%= currentPath == '/logout' ? 'active' : '' %>">Logout</a>
+            </li>
+        <% } else { %>
+            <li>
+                <a href="/login" class="<%= currentPath == '/login' ? 'active' : '' %>">Login</a>
+            </li>
+            <li>
+                <a href="/register" class="<%= currentPath == '/register' ? 'active' : '' %>">Register</a>
+            </li>
+        <% } %>
+    </ul>
+</nav>
