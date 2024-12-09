@@ -251,7 +251,6 @@ app.post('/register', async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
     let confirmPassword = req.body.confirmPassword;
-
     if (password !== confirmPassword) {
         let error = "Passwords do not match";
         res.render('register', {error});
@@ -264,9 +263,13 @@ app.post('/register', async (req, res) => {
     // INSERT user into database here
     // Example pseudo-code:
     let sql = `INSERT INTO user (username, email, password) VALUES (?, ?, ?)`
-    let sqlParams = [username, email, hashedPassword]
-
     await conn.query(sql, sqlParams);
+    let sql_userid = `SELECT user_id FROM user WHERE username = ?`
+    await conn.query(sql_userid, [username]);
+    let sql2 = `INSERT INTO userPreferences (user_id, zipcode, user_temp, image) VALUES (?, ?, ?, ?)`
+    let sqlParams = [username, email, hashedPassword]
+    let sqlParams2 = []
+
     res.redirect('/login');
 });
 
