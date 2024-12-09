@@ -26,17 +26,6 @@
         <input type="text" id="locationInput" name="savedLocation" placeholder="Enter your location" value="<%=zipCode%>" required>
     </div>
 
-    <!-- Background Image -->
-    <div>
-        <label for="bgImage">Background Image:</label>
-        <select id="bgImage" name="backgroundImage">
-            <option value="default" <%= image === 'default' ? 'selected' : '' %>>Default</option>
-            <option value="sunset" <%= image === 'sunset' ? 'selected' : '' %>>Sunset</option>
-            <option value="mountains" <%= image === 'mountains' ? 'selected' : '' %>>Mountains</option>
-            <option value="cityscape" <%= image === 'cityscape' ? 'selected' : '' %>>Cityscape</option>
-        </select>
-    </div>
-    
 
     <!-- Submit or Save Preferences -->
     <div>

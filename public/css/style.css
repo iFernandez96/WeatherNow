@@ -25,31 +25,67 @@ footer {
 nav {
     background: #1e88e5;
     width: 100%;
-    padding: 10px 0;
+    padding: 0.625rem 1.25rem;
     position: fixed;
     top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-wrap: wrap;
 }
 
-nav ul {
-    list-style-type: none;
+.nav-container {
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    justify-content: flex-end;
+}
+
+.nav-right ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
     margin: 0;
     padding: 0;
 }
 
-nav ul li a {
+.nav-right ul li {
+    display: inline;
+}
+
+.nav-right ul li a {
     color: #fff;
+    text-decoration: none;
     font-size: 1rem;
-    padding: 5px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.3125rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-nav ul li a:hover {
-    color: #90caf9;
+.nav-right ul li a:hover {
+    background-color: #0d47a1;
+    color: #fff;
 }
 
-nav ul li a.active {
-    color: black;
+.nav-right ul li a.active {
+    background-color: #90caf9;
+    color: #333;
     font-weight: bold;
 }
 
@@ -137,33 +173,34 @@ button:hover {
     justify-content: center;
 }
 
-.location-weather h2 {
-    flex: 1 1 100%;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-#WeatherNow {
-    font-weight: bold;
-    justify-content: left;
-    font-size: 2em;
-}
+.location-weather {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: flex-start;
+    
+    }
 
 .forecast-day {
-    flex: 0 1 350px;
+    flex: 0 1 calc(33.333% - 1.5rem);
+    max-width: 20rem;
+    min-width: 15rem;
     border: 1px solid #ddd;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
     background: #f9f9f9;
+    text-align: center;
+}
+
+#sevend{
     text-align: center;
 }
 
 .wi {
     margin-right: 8px;
-    color: #1e88e5;  /* Matches your existing theme color */
+    color: #1e88e5;
     font-size: 1.2em;
     vertical-align: middle;
 }
-
-
