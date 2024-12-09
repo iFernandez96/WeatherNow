@@ -113,7 +113,6 @@ app.get('/', async (req, res) => {
  app.get('/location', async (req, res) => {
      let weather;
      let units = "imperial";
-     console.log(req.query.location);
      if (req.session.authenticated) {
          let userId = req.session.userId;
          let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
@@ -124,7 +123,10 @@ app.get('/', async (req, res) => {
      } else {
          weather = await getWeather(req.query.location, "imperial")
      }
-     let location  = weather.location.name;
+     let sql = `SELECT * FROM saved_locations WHERE zipcode = ?`;
+     let sqlParams = [req.query.location];
+     let [data] = await conn.query(sql, sqlParams);
+     let location = data[0].location_name;
      res.render('location.ejs', {weather, location, units});
  });
 
