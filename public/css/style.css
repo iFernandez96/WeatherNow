@@ -164,36 +164,6 @@ button:hover {
     margin: 0 auto;
 }
 
-.location-weather {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    align-items: flex-start;
-    margin: 20px 250px;
-    justify-content: center;
-}
-
-.location-weather {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    justify-content: center;
-    align-items: flex-start;
-    
-    }
-
-.forecast-day {
-    flex: 0 1 calc(33.333% - 1.5rem);
-    max-width: 20rem;
-    min-width: 15rem;
-    border: 1px solid #ddd;
-    padding: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
-    background: #f9f9f9;
-    text-align: center;
-}
-
 #sevend{
     text-align: center;
 }
@@ -203,4 +173,29 @@ button:hover {
     color: #1e88e5;
     font-size: 1.2em;
     vertical-align: middle;
+}
+
+.location-weather {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+    margin: 20px 250px;
+    justify-content: center;
+}
+
+.location-weather h2 {
+    flex: 1 1 100%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.forecast-day {
+    flex: 0 1 350px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    background: #f9f9f9;
+    text-align: center;
 }
