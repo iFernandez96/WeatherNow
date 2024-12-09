@@ -17,10 +17,12 @@ function generateRandomPassword() {
 
 document.getElementById('generatePassword').addEventListener('click', () => {
     const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
     const generatedPassword = document.getElementById('generatedPassword');
     const generated = generateRandomPassword();
     
-    password.value = '';
+    password.value = ''; 
+    confirmPassword.value = '';
     generatedPassword.textContent = `Generated Password: ${generated}`;
     generatedPassword.style.color = "green";
     generatedPassword.style.display = 'block';
@@ -34,7 +36,7 @@ document.getElementById('generateUsername').addEventListener('click', async () =
     const data = await response.json();
     const generated = data.results[0].login.username;
     
-    username.value = '';
+    username.value = '';  
     generatedUsername.textContent = `Generated Username: ${generated}`;
     generatedUsername.style.color = "orange";
     generatedUsername.style.display = 'block';
@@ -43,13 +45,18 @@ document.getElementById('generateUsername').addEventListener('click', async () =
 document.querySelector('form').addEventListener('submit', (e) => {
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
+    const confirmPassword = document.getElementById('confirmPassword').value.trim();
     const feedback = document.getElementById('feedback');
     
-    if (!username || !password) {
+    if (!username || !password || !confirmPassword) {
         e.preventDefault();
         feedback.textContent = 'Please fill all fields';
         feedback.style.color = "red";
         feedback.style.display = 'block';
-        setTimeout(() => feedback.style.display = 'none', 3000);
+    } else if (password !== confirmPassword) {
+        e.preventDefault();
+        feedback.textContent = 'Passwords do not match';
+        feedback.style.color = "red";
+        feedback.style.display = 'block';
     }
-});
+})

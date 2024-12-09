@@ -1,33 +1,48 @@
-
 <%- include("partials/head.ejs") %>
 <%- include("partials/nav.ejs") %>
 
 <h1>Register</h1>
 <br>
 <div id="register-page">
-<form action="/register" method="POST">
-    <div>
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required><br>
-    </div>
-    <div>
-    <label for="email">Email:</label>
-    <input type="email" name="email" required><br>
-    </div>
-    <div>
-    <label for="password">Password:</label>
-    <input type="password" name="password" required><br>
-    </div>
-    <div>
-    <label for="confirmPassword">Confirm Password:</label>
-    <input type="password" name="confirmPassword" required><br>
-    </div>
-    <% if (error) { %>
-        <p style="color:red;"><%= error %></p>
-    <% } %>
+    <div id="feedback" style="display: none; margin-bottom: 15px; padding: 10px;"></div>
     
-    <button>Register</button>
-</form>
+    <form action="/register" method="POST">
+        <div>
+            <label for="username">Username:</label>
+            <div>
+                <input type="text" id="username" name="username" required>
+                <button type="button" id="generateUsername">Generate Username</button>
+            </div>
+            <div id="generatedUsername" style="margin-top: 5px; font-weight: bold;"></div>
+        </div>
+
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" name="email" required><br>
+        </div>
+
+        <div>
+            <label for="password">Password:</label>
+            <div>
+                <input type="password" id="password" name="password" required>
+                <button type="button" id="generatePassword">Generate Password</button>
+            </div>
+            <div id="generatedPassword" style="margin-top: 5px; font-weight: bold;"></div>
+        </div>
+
+        <div>
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" name="confirmPassword" id="confirmPassword" required><br>
+        </div>
+
+        <% if (error) { %>
+            <p style="color:red;"><%= error %></p>
+        <% } %>
+        
+        <button type="submit">Register</button>
+    </form>
 </div>
+
+<script src="/js/script.js"></script>
 
 <%- include("partials/footer.ejs") %>
