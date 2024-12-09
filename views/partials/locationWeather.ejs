@@ -11,10 +11,13 @@
 %>
 
 <div class="location-weather">
-    <h2><%= location%><br> 7 Day Forecast</h2>
+    <h2><%= location%><br> 6 Day Forecast</h2>
 
-    <% for (let day of days) {
-        let date = new Date(day.time)
+    <%
+    let count = 0;
+    for (let day of days) {
+        let date = new Date(day.time);
+        if(count < 6) {
     %>
 
     <div class="forecast-day">
@@ -45,5 +48,8 @@
         </p>
     </div>
     <br><br>
-    <% } %>
+    <%
+        count++;
+    }
+    } %>
 </div>
