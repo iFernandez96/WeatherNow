@@ -86,7 +86,6 @@ async function getLocations() {
 }
 
 async function getWeather(zip, units) {
-    console.log(assembleUrl(zip));
     let response = await fetch(assembleUrl(zip, units));
     return await response.json();
 }
