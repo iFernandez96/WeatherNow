@@ -24,9 +24,10 @@ app.use(session({
     saveUninitialized: true
 }))
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     res.locals.currentPath = req.path;
     res.locals.auth = req.session.authenticated;
+    res.locals.locations = await getLocations();
     next();
 });
 
@@ -77,6 +78,13 @@ function assembleUrl(zip, units) {
     return `${weatherBaseUrl}?${params.toString()}`;
 }
 
+async function getLocations() {
+    let sql = `SELECT * FROM saved_locations`;
+    const [rows] = await conn.query(sql);
+    console.log(rows);
+    return rows;
+}
+
 async function getWeather(zip, units) {
     console.log(assembleUrl(zip));
     let response = await fetch(assembleUrl(zip, units));
@@ -98,25 +106,23 @@ app.get('/', async (req, res) => {
         weather = await getWeather(95060, "imperial")
     }
     let location = weather.location.name;
-    console.log(weather.timelines.daily);
     res.render('home.ejs', {weather, location});
 });
 
  app.get('/location', async (req, res) => {
      let weather;
+     console.log(req.query.location);
      if (req.session.authenticated) {
          let userId = req.session.userId;
          let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
          let sqlParams = [userId];
          const [rows] = await conn.query(sql, sqlParams);
          var units = rows[0].user_temp;
-         weather = await getWeather(rows[0].zipcode, units);
+         weather = await getWeather(req.query.location, units);
      } else {
-         weather = await getWeather(95060, "imperial")
+         weather = await getWeather(req.query.location, "imperial")
      }
-     let location  = req.query.location;
-     console.log(location);
-     console.log(weather.timelines.daily);
+     let location  = weather.location.name;
      res.render('location.ejs', {weather, location});
  });
 

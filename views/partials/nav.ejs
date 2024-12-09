@@ -13,10 +13,36 @@
             </form>
         </li>
         <li>
-            <a href="/" class="<%= currentPath == '/' ? 'active' : '' %>">Home</a>
+            <form id="locationForm">
+                View Location:
+                <select name="location" id="locationSelect">
+                    <option value="">-- Select a location --</option>
+                    <% locations.forEach(location => { %>
+                        <option value="<%= location.zipcode %>"><%= location.location_name %></option>
+                    <% }); %>
+                </select>
+                <button type="submit">Go</button>
+            </form>
+
+            <script>
+                const form = document.getElementById('locationForm');
+                const select = document.getElementById('locationSelect');
+
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault(); // Prevent form from submitting traditionally
+                    const selectedLocation = select.value;
+
+                    if (selectedLocation) {
+                        // Redirect to the /location/:location route
+                        window.location.href = `/location?location=${encodeURIComponent(selectedLocation)}`;
+                    } else {
+                        alert('Please select a location!');
+                    }
+                });
+            </script>
         </li>
         <li>
-            <a href="/location" class="/location">My Location </a>
+            <a href="/" class="<%= currentPath == '/' ? 'active' : '' %>">Home</a>
         </li>
         <% if (auth) { %>
             <li>
