@@ -13,9 +13,11 @@ var weatherBaseUrl = 'https://api.tomorrow.io/v4/weather/forecast';
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
+
 // Express needs the following line to parse data sent using the post method.
 app.use(express.urlencoded({extended:true}));
 
+app.use('/node_modules', express.static('node_modules'));
 // Express Session specific
 app.set('trust proxy', 1) // trust first proxy
 app.use(session({
