@@ -143,6 +143,12 @@ button:hover {
     margin-bottom: 20px;
 }
 
+#WeatherNow {
+    font-weight: bold;
+    justify-content: left;
+    font-size: 2em;
+}
+
 .forecast-day {
     flex: 0 1 350px;
     border: 1px solid #ddd;
@@ -152,4 +158,12 @@ button:hover {
     background: #f9f9f9;
     text-align: center;
 }
+
+.wi {
+    margin-right: 8px;
+    color: #1e88e5;  /* Matches your existing theme color */
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
 
