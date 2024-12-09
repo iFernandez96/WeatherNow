@@ -1,4 +1,4 @@
- //James Fisher
+//James Fisher
 import express from 'express';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcrypt';
@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 const weatherKey = process.env.WEATHER_KEY;
-var weatherBaseUrl = 'https://api.tomorrow.io/v4/weather/forecast';
+let weatherBaseUrl = 'https://api.tomorrow.io/v4/weather/forecast';
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
@@ -45,7 +45,7 @@ const pool = mysql.createPool({
 const conn = await pool.getConnection();
 
 function isAuthenticated(req, res, next) {
-    if (req.session.authenticated == true) {
+    if (req.session.authenticated === true) {
         next();
     } else {
         res.redirect('/');
@@ -53,7 +53,7 @@ function isAuthenticated(req, res, next) {
 }
 
 function isAuthenticatedAdmin(req, res, next) {
-    if (req.session.authenticated == true && req.session.admin == true) {
+    if (req.session.authenticated === true && req.session.admin === true) {
         next();
     } else {
         res.redirect('/');
@@ -88,52 +88,62 @@ async function getLocations() {
 }
 
 async function getWeather(zip, units) {
-    console.log(assembleUrl(zip));
     let response = await fetch(assembleUrl(zip, units));
-    let data = await response.json();
-    return data;
+    return await response.json();
 }
 
 //routes
 app.get('/', async (req, res) => {
     let weather;
+    let units = "imperial";
     if (req.session.authenticated) {
         let userId = req.session.userId;
         let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
         let sqlParams = [userId];
         const [rows] = await conn.query(sql, sqlParams);
-        var units = rows[0].user_temp;
+        units = rows[0].user_temp;
         weather = await getWeather(rows[0].zipcode, units);
     } else {
         weather = await getWeather(95060, "imperial")
     }
     let location = weather.location.name;
-    res.render('home.ejs', {weather, location});
+    res.render('home.ejs', {weather, location, units});
 });
 
  app.get('/location', async (req, res) => {
      let weather;
+     let units = "imperial";
      console.log(req.query.location);
      if (req.session.authenticated) {
          let userId = req.session.userId;
          let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
          let sqlParams = [userId];
          const [rows] = await conn.query(sql, sqlParams);
-         var units = rows[0].user_temp;
+         units = rows[0].user_temp;
          weather = await getWeather(req.query.location, units);
      } else {
          weather = await getWeather(req.query.location, "imperial")
      }
      let location  = weather.location.name;
-     res.render('location.ejs', {weather, location});
+     res.render('location.ejs', {weather, location, units});
  });
 
  app.get('/search', async (req, res) => {
+     let weather;
+     let units = "imperial";
      let zipcode  = req.query.zipcode;
-     let weather = await getWeather(zipcode);
-     console.log(weather.timelines.daily);
+     if (req.session.authenticated) {
+         let userId = req.session.userId;
+         let sql = `SELECT * FROM userPreferences WHERE user_id = ?`;
+         let sqlParams = [userId];
+         const [rows] = await conn.query(sql, sqlParams);
+         units = rows[0].user_temp;
+         weather = await getWeather(zipcode, units);
+     } else {
+         weather = await getWeather(zipcode, "imperial")
+     }
      let location = weather.location.name;
-     res.render('search.ejs', {weather, location});
+     res.render('search.ejs', {weather, location, units});
  });
 
 app.get('/logout',isAuthenticated, (req, res) => {
