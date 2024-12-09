@@ -153,3 +153,11 @@ button:hover {
     text-align: center;
 }
 
+.wi {
+    margin-right: 8px;
+    color: #1e88e5;  /* Matches your existing theme color */
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
+
